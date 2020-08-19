@@ -11,29 +11,29 @@ import numpy as np
 
 class Archimedean(Pattern):
     
-    def __init__(self, WIDTH, HEIGHT, width_factor, height_factor):
-        super().__init__(WIDTH, HEIGHT, width_factor, height_factor)
+    def __init__(self, N, t, x, y, alpha, spiral_width, sigma):
         
-        # shape parameters
-        self.name = 'archimedean'
-        self.n_pts = np.random.choice(np.arange(140, 221, 10))
-        self.t = np.random.choice(range(15,70)) 
-        self.x = np.random.choice(range(3,10)) 
-        self.y = np.random.choice(range(3,10))
-        self.alpha = np.random.choice(range(1,5))
-        self.spiral_width = [0, np.random.choice([0.1, 0.2, 0.3, 0.4, 0.5])]
-        self.sigma = None
-        self.random_sigma(arr=np.arange(0, 3, 0.2), start=0.5, end=0.1)
+        self.label = 'spiral'
         self.line_width = 2
         self.fill_shape = True
+        
+        # shape parameters
+        self.N = np.random.choice(N)
+        self.t = np.random.choice(t) 
+        self.x = np.random.choice(x) 
+        self.y = np.random.choice(y)
+        self.alpha = np.random.choice(alpha)
+        self.spiral_width = [0, np.random.choice(spiral_width)]
+        self.sigma = sigma
+        self.random_sigma(arr=self.sigma, start=0.5, end=0.1)
         
         # shape data
         self.points = [None] * len(self.spiral_width)
     
     def archimedean_spiral(self, width):
     
-        xy_pts = np.zeros((self.n_pts, 2))
-        for i in range(self.n_pts):
+        xy_pts = np.zeros((self.N, 2))
+        for i in range(self.N):
             t = (i / self.t) * np.pi
             x = (1 + (self.x + width) * t) * np.cos(self.alpha * t) + np.random.normal(0, self.sigma, 1)
             y = (1 + (self.y + width) * t) * np.sin(self.alpha * t) + np.random.normal(0, self.sigma, 1)
