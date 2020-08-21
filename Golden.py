@@ -35,8 +35,8 @@ class Golden(Pattern):
         def curve(arr, theta):
             xy_pts = [None] * len(theta)
             for i, (r, t) in enumerate(zip(arr, theta)):
-                xy_pts[i] = np.array([r * np.cos(t) + np.random.normal(0, self.sigma), 
-                                      r * np.sin(t) + np.random.normal(0, self.sigma)])
+                xy_pts[i] = np.array([r * np.cos(t) + (i * np.random.normal(0, self.sigma)), 
+                                      r * np.sin(t) + (i * np.random.normal(0, self.sigma))])
 
             xy_pts = np.array(xy_pts)
             return xy_pts

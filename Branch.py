@@ -16,7 +16,7 @@ class Branch(Pattern):
     def __init__(self, 
                  n_iter, 
                  degrees, 
-                 distance, 
+                 length, 
                  length_noise, 
                  angle_noise, 
                  line_width):
@@ -24,12 +24,13 @@ class Branch(Pattern):
         self.label = 'branch'
         self.fill_shape = False
         
-        self.system = L_System.L_System(np.random.choice(n_iter))
-        self.theta = np.random.choice(degrees) * np.pi / 180
-        self.distance = np.random.choice(distance)
-        self.length_noise = np.random.choice(length_noise)
-        self.angle_noise = np.random.choice(angle_noise)
-        self.line_width = np.random.choice(line_width)
+        # shape parameters
+        self.system = L_System.L_System(n_iter)
+        self.theta = degrees * np.pi / 180
+        self.length = length
+        self.length_noise = length_noise
+        self.angle_noise = angle_noise
+        self.line_width = line_width
         
     def reduce_noise_freq(self, randomize):
         ln = 0
@@ -45,24 +46,25 @@ class Branch(Pattern):
     def make_points(self):
         pass
     
-    def draw_path(self, ctx):
-        ctx.move_to(self.width, self.height)
+    def draw_path(self):        
+        
+        self.ctx.move_to(self.width, self.height)
 
-        randomize = np.random.uniform(0, 1) < 0.6
+        randomize = np.random.uniform(0, 1) < 0.0
         for cmd in self.system.instructions:
             
             ln, an = self.reduce_noise_freq(randomize)
                 
             if cmd == 'F': # move forward
-                self.translate(ctx, self.distance + ln, -self.distance + ln)
+                self.translate(self.length + ln, -self.length + ln)
             elif cmd == 'B': # move backward
-                self.translate(ctx, -self.distance + ln, -self.distance + ln)
+                self.translate(-self.length + ln, -self.length + ln)
             elif cmd == '+': # rotate left
-                self.rotate(ctx, self.theta + an)
+                self.rotate(self.theta + an)
             elif cmd == '-': # rotate right
-                self.rotate(ctx, -self.theta + an)
+                self.rotate(-self.theta + an)
             elif cmd == '[': # save current state
-                ctx.save()
+                self.ctx.save()
             elif cmd == ']': # return to last saved state
-                ctx.restore()
-                ctx.move_to(self.width, self.height)
+                self.ctx.restore()
+                self.ctx.move_to(self.width, self.height)

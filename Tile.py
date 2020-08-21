@@ -6,7 +6,6 @@ Created on Tue Aug 18 13:59:37 2020
 @author: Elliot
 """
 
-import cairo
 import numpy as np
 import alphashape
 
@@ -16,79 +15,89 @@ from scipy.spatial import Voronoi
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from descartes import PolygonPatch
+from collections import deque
 
 class Tile(Pattern):
     
-    def __init__(self, n, m, s, xs, ys, line_width):
+    def __init__(self, N, scale, noise, x_shift, y_shift, line_width):
         
         self.label = 'tile'
         self.fill_shape = False
         
         # shape parameters
-        self.n = np.random.choice(n)
-        self.m = np.random.choice(n)
-        self.s = np.random.choice(s)
-        self.xs = np.random.choice(xs)
-        self.ys = np.random.choice(ys)
-        self.line_width = np.random.choice(line_width)
+        self.N = N
+        self.scale = scale
+        self.noise = noise
+        self.x_shift = x_shift
+        self.y_shift = y_shift
+        self.line_width = line_width
         
         # shape data
-        self.points = [] # FIXME make is so that you don't have to append (very slow)
+        self.points = deque()
+        self.pts_in_poly = None
+        self.bounding_poly = None
         
     def create_polygon(self, points):
         alpha_shape = alphashape.alphashape(points, 0)
-        poly_path = PolygonPatch(alpha_shape, alpha=.2)._path._vertices
+        poly_path = PolygonPatch(alpha_shape, alpha=0)._path._vertices
         polygon = Polygon(poly_path)
         return polygon
 
-    # generate uniform n x m grid and add gaussian noise to each grid point
+    # generate uniform n x n grid and add gaussian noise to each grid point
     def make_points(self):
         
-        for i in range(self.n):
-            if i % 2 == 0:
-                x_shift = 0
-            else:
-                x_shift = self.xs
-            for j in range(self.m):
+        for i in range(self.N): 
+            for j in range(self.N):  
+                x_val = i * self.scale
+                y_val = j * self.scale
                 if j % 2 == 0:
-                    y_shift = 0
-                else:
-                    y_shift = self.ys
-                self.points.append([i + np.random.normal(0, self.s) + y_shift, 
-                               j + np.random.normal(0, self.s) + x_shift])
+                    x_val += self.x_shift + np.random.normal(0, self.noise)
+                    y_val += self.y_shift + np.random.normal(0, self.noise)
+                
+                self.points.append(np.array([x_val, y_val], dtype='float64'))
+                
         self.points = np.array(self.points)
         
-    def draw_path(self, ctx):
-        
-        # scale, center, and add random translation
-        self.points *= (self.width/10)
-        mid_pt = self.points[(self.n * self.m) // 2]
-        fst_pt = self.points[0]
-        dist = LA.norm(mid_pt - fst_pt)
-        ctx.translate(self.width - (dist/1.5) + np.random.normal(0, 20), 
-                      self.height - (dist/1.5) + np.random.normal(0, 20) + 50)
-    
+    def filter_points(self):
         # create bounding polygon
-        N = 12 # just seemed like a good number...
-        rand_points = np.random.randint(self.m, size=(N, 2)) * (self.width/10.2)
+        n = 12 # just seemed like a good number...
+        rand_points = np.random.randint(self.N, size=(n, 2)) * (self.width/10.2)
         
         polygon = self.create_polygon(rand_points)
-    
         # remove grid points outside of polygon
-        pts_in_poly = np.array([list(p) for p in self.points if polygon.contains(Point(p))])
-        
+        self.pts_in_poly = np.array([np.array(p) for p in self.points if polygon.contains(Point(p))])
         # create polygon in which lines will be drawn
-        bounding_poly = self.create_polygon(pts_in_poly)
+        self.bounding_poly = self.create_polygon(self.pts_in_poly)
+        
+    def draw_path(self):
+        
+        if not self.is_mask:
+            
+            self.make_points()
+            
+            # scale
+            self.points *= (self.width/10)
+            
+            # filter points not in bounding polygon
+            self.filter_points()
+            
+        # center on middle of grid polygon
+        mid_pt = self.points[(self.N * self.N) // 2]
+        fst_pt = self.points[0]
+        dist = LA.norm(mid_pt - fst_pt)
+        self.ctx.translate(self.width - (dist/1.5), 
+                      self.height - (dist/1.5))
             
         # calculate Voronoi tessellation
-        vor = Voronoi(pts_in_poly)
+        vor = Voronoi(self.pts_in_poly)
         
-        # draw Voronoi tessellation inside bounding polygon
+        # draw Voronoi tessellation inside the bounding polygon
         for simplex in vor.ridge_vertices:
             simplex = np.asarray(simplex)
             if np.all(simplex >= 0):
                 v = vor.vertices[simplex, :]
-                if bounding_poly.contains(Point(*v[0])) and bounding_poly.contains(Point(*v[1])):
-                    ctx.move_to(*v[0])
-                    ctx.line_to(*v[1])
+                # only plot points if they are in the bounding poly
+                if self.bounding_poly.contains(Point(*v[0])) and self.bounding_poly.contains(Point(*v[1])):
+                    self.ctx.move_to(*v[0])
+                    self.ctx.line_to(*v[1])
     
