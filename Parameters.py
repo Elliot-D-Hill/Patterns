@@ -19,9 +19,9 @@ class Parameters():
     def set_parameters(self):
         
         # golden spiral parameters
-        N = np.arange(32, 45) # number of points in spiral sequence
+        N = np.arange(35, 45) # number of points in spiral sequence
         b = np.arange(1, 1.2, 0.01) # how tightly the spirals curves (I think...)
-        a = np.arange(1, 3, 0.1) # scaling constant
+        a = np.arange(1.5, 2.5, 0.05) # scaling constant
         step = np.arange(0.16, 0.25, 0.01) # length between samples
         noise = np.arange(0, 0.2, 0.05) # noise in xy coordinates
         num_arms = np.arange(1, 11) # number of spiral arms
@@ -42,9 +42,9 @@ class Parameters():
         self.parameters['archimedean'] = [N, t, x, y, c, alpha, spiral_width, noise]
             
         # explosion parameters
-        degrees = np.arange(0.1,15, 0.1)
+        degrees = np.arange(0.5,15, 0.1)
         n_joints = np.arange(1, 5)
-        length = np.arange(25, 40)
+        length = np.arange(25, 35, 0.1)
         length_noise = np.arange(0, 30)
         offset = np.arange(0, 25)
         offset_noise = np.arange(0, 5)
@@ -57,9 +57,9 @@ class Parameters():
         # tile parameters
         N = np.arange(10, 21) # grid size in x dimension
         scale = np.arange(0.6, 1.1, 0.05)
-        noise = np.arange(0, 0.16, 0.01)
-        x_shift = np.arange(0, 1.01, 0.01)
-        y_shift = np.arange(0, 0.7, 0.01)
+        noise = np.arange(0, 0.1, 0.01)
+        x_shift = np.arange(-0.9, 0.9, 0.01)
+        y_shift = np.arange(-0.9, 0.9, 0.01)
         line_width = np.arange(1, 10, 0.25)
 
         self.parameters['tile'] = [N, scale, noise, x_shift, y_shift, line_width]

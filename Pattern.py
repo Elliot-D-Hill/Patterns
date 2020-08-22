@@ -21,11 +21,13 @@ class Pattern():
     height_factor = 0.5
     width = WIDTH * width_factor
     height = HEIGHT * height_factor
+    is_mask = False
     
     def __init__(self):
         self.ctx = None
         self.surface = None
-        self.is_mask = False
+ 
+        self.background_color = None
         
     @abc.abstractmethod
     def draw_path(self):
@@ -105,15 +107,15 @@ class Pattern():
         self.surface = cairo.ImageSurface(cairo.FORMAT_RGB24, self.WIDTH, self.HEIGHT)
         self.ctx = cairo.Context(self.surface)
         
-        background_color = self.color_background()
+        self.background_color = self.color_background()
         
         # add a random shift and rotation on the original image
-        # self.random_transform()
+        self.random_transform()
         
         # must be implemented by other shape classes
         self.draw_path()
         
-        self.color_shape(background_color, self.line_width, self.fill_shape)
+        self.color_shape(self.background_color, self.line_width, self.fill_shape)
         # write image to file
         self.surface.write_to_png(self.filepath)
     
