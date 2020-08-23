@@ -110,7 +110,7 @@ class Pattern():
         self.background_color = self.color_background()
         
         # add a random shift and rotation on the original image
-        self.random_transform()
+        # self.random_transform()
         
         # must be implemented by other shape classes
         self.draw_path()

@@ -64,7 +64,7 @@ for i in range(imgs_per_class):
         shape.is_mask=False
         shape.create_image()
         
-        shape.filepath = f'{PATH_TO_MASKS_FOLDER}/{shape.label}_mask{indexes[pattern]}.png'
+        shape.filepath = f'{PATH_TO_MASKS_FOLDER}/{shape.label}{indexes[pattern]}_mask.png'
         shape.is_mask=True
         shape.create_image()
     

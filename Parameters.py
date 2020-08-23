@@ -36,8 +36,8 @@ class Parameters():
         y = np.arange(3,10) # scale of y points
         c = np.arange(1, 40) # size of center
         alpha = np.arange(1, 4, 0.1) # number of loops
-        spiral_width = np.arange(0.15, 0.8, 0.05)
-        noise = np.arange(0, 0.25, 0.01) # <------- FIXME sigma doesn't add noise???
+        spiral_width = np.arange(0.15, 0.8, 0.05) # width of spiral arm
+        noise = np.arange(0, 0.25, 0.01) # <------- FIXME doesn't add noise???
         
         self.parameters['archimedean'] = [N, t, x, y, c, alpha, spiral_width, noise]
             
@@ -57,9 +57,9 @@ class Parameters():
         # tile parameters
         N = np.arange(10, 21) # grid size in x dimension
         scale = np.arange(0.6, 1.1, 0.05)
-        noise = np.arange(0, 0.1, 0.01)
-        x_shift = np.arange(-0.9, 0.9, 0.01)
-        y_shift = np.arange(-0.9, 0.9, 0.01)
+        noise = [0]#np.arange(0, 0.05, 0.001)
+        x_shift = np.arange(-0.7, 0.7, 0.01)
+        y_shift = np.arange(-0.7, 0.7, 0.01)
         line_width = np.arange(1, 10, 0.25)
 
         self.parameters['tile'] = [N, scale, noise, x_shift, y_shift, line_width]

@@ -45,19 +45,22 @@ class Tile(Pattern):
 
     # generate uniform n x n grid and add gaussian noise to each grid point
     def make_points(self):
+        
+        def skip_shift(idx, val, shift):
+            if idx % 2 == 0:
+                val += shift
+            val *=  self.scale
+            val += np.random.normal(0, self.noise)
+            return val
 
-        for i in range(self.N): 
-            x_val = i
-            if i % 2 == 0:
-                    x_val += self.x_shift
-            x_val += np.random.normal(0, self.noise)
-            x_val *=  self.scale
-            for j in range(self.N):  
-                y_val = j
-                if i % 2 == 0:
-                    y_val += self.y_shift
-                y_val += np.random.normal(0, self.noise)
-                y_val *=  self.scale
+        for i in range(self.N):
+            # x_val = skip_shift(i, i)
+            for j in range(self.N):
+                x_val = skip_shift(i, j, self.x_shift)
+                if np.random.choice([0, 1]):
+                    y_val = skip_shift(j, i, self.y_shift)
+                else:
+                    y_val = skip_shift(i, i, self.y_shift)
                 
                 self.points.append(np.array([x_val, y_val], dtype='float64'))
                 
