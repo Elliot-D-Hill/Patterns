@@ -53,8 +53,10 @@ class Explosion(Pattern):
         pass
         
     def draw_path(self):
+        
         self.shear(np.random.normal(0, self.shear_noise), 
                         np.random.normal(0, self.shear_noise))
+        
         self.ctx.move_to(self.width, self.height)
         
         theta = 0

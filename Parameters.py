@@ -56,8 +56,8 @@ class Parameters():
     
         # tile parameters
         N = np.arange(10, 21) # grid size in x dimension
-        scale = np.arange(0.6, 1.1, 0.05)
-        noise = [0]#np.arange(0, 0.05, 0.001)
+        scale = np.arange(0.6, 1.1, 0.05) # scales space between grid points
+        noise = np.arange(0, 0.09, 0.001) # noise of grid points
         x_shift = np.arange(-0.7, 0.7, 0.01)
         y_shift = np.arange(-0.7, 0.7, 0.01)
         line_width = np.arange(1, 10, 0.25)
