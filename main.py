@@ -6,8 +6,8 @@ Created on Mon Aug 17 21:17:20 2020
 @author: Elliot
 """
 
-
 from IPython.display import Image, display
+
 import Parameters
 import Spiral
 import Tile
@@ -21,28 +21,41 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
+# set path to data folder
 PATH_TO_IMAGE_FOLDER = 'data/images'
 PATH_TO_MASKS_FOLDER = 'data/image_masks'
 
-dispay_images = True # only turn this on if you create a small number of images...
+# choose number of images to create
+num_images = 20
+# only turn this on if you create a small number of images
+dispay_images = True 
 
 parameters = Parameters.Parameters()
-num_images = 20
 num_patterns = len(parameters.patterns)
-# the number of images per shape type
-imgs_per_class = int(np.ceil(num_images / num_patterns))
+imgs_per_pattern = int(np.ceil(num_images / num_patterns))
 
 # initialize the ranges of all shape parameters
 parameters.set_parameters()
 
+# keep track of each pattern type created
 indexes = {p: 0 for p in parameters.patterns}
 
-for i in range(imgs_per_class):
+image_count = 0
+for i in range(imgs_per_pattern):
     for j in range(num_patterns):
         
-        pattern = 'tile'# parameters.patterns[j]
-        random_parameters = parameters.choose_random(pattern)
+        pattern = parameters.patterns[j]
         indexes[pattern] += 1
+        idx = indexes[pattern] 
+        
+        # required because their are two types of spirals implemented
+        if pattern == 'spiral':
+            if np.random.choice([0,1]):
+                pattern = 'archimedean'
+            else:
+                pattern = 'golden'
+        
+        random_parameters = parameters.choose_random(pattern)
         
         if pattern == 'golden': # golden spiral
             shape = Spiral.Golden(*random_parameters)
@@ -58,17 +71,25 @@ for i in range(imgs_per_class):
         # set image dimensions
         shape.WIDTH=600
         shape.HEIGHT=600
-
-        filepath = f'{PATH_TO_IMAGE_FOLDER}/{shape.label}{indexes[pattern]}.png'
-        shape.filepath = filepath
-        shape.is_mask=False
-        shape.create_image()
+    
+        shape.filepath = f'{PATH_TO_IMAGE_FOLDER}/{shape.label}{idx}.png'
+        shape.maskpath = f'{PATH_TO_MASKS_FOLDER}/{shape.label}_masks{idx}.png'
         
-        shape.filepath = f'{PATH_TO_MASKS_FOLDER}/{shape.label}{indexes[pattern]}_mask.png'
-        shape.is_mask=True
+        # an image must be created before a corresponding mask can be created
         shape.create_image()
+        shape.create_mask()
     
         if dispay_images:
-            img = Image(filename=filepath)
+            
+            img = Image(filename=shape.filepath)
             display(img)
-
+    
+            mask = Image(filename=shape.maskpath)
+            display(mask)
+        
+        # break out of loops if the requested number of images have been created
+        image_count += 1
+        if image_count >= num_images:
+            break
+    if image_count >= num_images:
+        break

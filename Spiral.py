@@ -32,6 +32,7 @@ class Archimedean(Pattern):
         # shape data
         self.points = [None] * len(self.spiral_width)
         
+        # generate x y coordinates when shape is initialized
         self.make_points()
     
     def archimedean_spiral(self, width):
@@ -52,8 +53,8 @@ class Archimedean(Pattern):
             self.points[i] = xy_pts
     
     def draw_path(self):
-        if not self.is_mask:
-            self.points[1] = self.points[1][::-1]
+
+        self.points[1] = self.points[1][::-1]
         self.ctx.move_to(*self.points[0][0])
         for xy_pts in self.points:
             for p in xy_pts:
@@ -81,6 +82,7 @@ class Golden(Pattern):
         self.points = None
         self.thetas = []
         
+        # generate x y coordinates when shape is initialized
         self.make_points()
             
     def golden_spiral(self):

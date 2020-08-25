@@ -23,15 +23,17 @@ class Branch(Pattern):
         
         self.label = 'branch'
         self.fill_shape = False
+        self.system = L_System.L_System(n_iter)
         
         # shape parameters
-        self.system = L_System.L_System(n_iter)
         self.theta = degrees * np.pi / 180
         self.length = length
         self.length_noise = length_noise
         self.angle_noise = angle_noise
         self.line_width = line_width
         
+    # reduces the freqency of line and angle noise
+    # allows for some vairation, but it not too chaotic
     def reduce_noise_freq(self, randomize):
         ln = 0
         an = 0
@@ -43,14 +45,11 @@ class Branch(Pattern):
                 an = self.angle_noise
         return ln, an
     
-    def make_points(self):
-        pass
-    
     def draw_path(self):        
         
         self.ctx.move_to(self.width, self.height)
 
-        randomize = np.random.uniform(0, 1) < 0.0
+        randomize = np.random.uniform(0, 1) < 0.7
         for cmd in self.system.instructions:
             
             ln, an = self.reduce_noise_freq(randomize)

@@ -19,7 +19,6 @@ class Explosion(Pattern):
                  length_noise, 
                  offset,
                  offset_noise,
-                 shear_noise, 
                  angle_noise, 
                  line_width):
 
@@ -32,7 +31,6 @@ class Explosion(Pattern):
         self.length = length
         self.offset = offset
         self.offset_noise = offset_noise
-        self.shear_noise = shear_noise
         self.length_noise = length_noise
         self.angle_noise = angle_noise
         self.line_width = line_width
@@ -53,9 +51,6 @@ class Explosion(Pattern):
         pass
         
     def draw_path(self):
-        
-        self.shear(np.random.normal(0, self.shear_noise), 
-                        np.random.normal(0, self.shear_noise))
         
         self.ctx.move_to(self.width, self.height)
         

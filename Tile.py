@@ -56,10 +56,11 @@ class Tile(Pattern):
             return val
         
         # grid generation
+        rand = np.random.choice([0, 1])
         for i in range(self.N):
             for j in range(self.N):
                 x_val = skip_shift(i, j, self.x_shift)
-                if np.random.choice([0, 1]):
+                if rand:
                     y_val = skip_shift(j, i, self.y_shift)
                 else:
                     y_val = skip_shift(i, i, self.y_shift)
@@ -82,24 +83,19 @@ class Tile(Pattern):
         
     def draw_path(self):
         
-        # this conditional is quirky and there is probably a more elegant solution
-        # but it essentially prevents points from being recalculated for the image mask
-        if not self.is_mask:
-            
-            self.make_points()
-            
-            # scale
-            self.points *= (self.width/10)
-            
-            # filter points not in bounding polygon
-            self.filter_points()
+        self.make_points()
+        
+        # scale
+        self.points *= (self.width/10)
+        
+        # filter points not in bounding polygon
+        self.filter_points()
             
         # center on middle of grid polygon
         mid_pt = self.points[(self.N * self.N) // 2]
         fst_pt = self.points[0]
         dist = LA.norm(mid_pt - fst_pt)
-        self.ctx.translate(self.width - dist*0.7, 
-                      self.height - dist*0.7)
+        self.ctx.translate(self.width - dist*0.7,  self.height - dist*0.7)
             
         # calculate Voronoi tessellation
         vor = Voronoi(self.pts_in_poly)

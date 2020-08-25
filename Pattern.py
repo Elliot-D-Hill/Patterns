@@ -10,6 +10,7 @@ import abc
 import cairo
 import numpy as np
 from numpy import linalg as LA
+from PIL import Image
 
 class Pattern():
     
@@ -21,18 +22,19 @@ class Pattern():
     height_factor = 0.5
     width = WIDTH * width_factor
     height = HEIGHT * height_factor
-    is_mask = False
     
     def __init__(self):
         self.ctx = None
         self.surface = None
- 
         self.background_color = None
+        self.shape_color = None
+        self.filepath = None
+        self.maskpath = None
         
     @abc.abstractmethod
     def draw_path(self):
         """Classes which inherit from the pattern class must have the draw_path() method implented"""
-        raise("This method must be implemented")
+        raise('draw_path() method must be implemented for classes that inherit from the Pattern class')
         return
         
     def rotate(self, theta):
@@ -58,28 +60,21 @@ class Pattern():
         # set random background color
         self.ctx.rectangle(0, 0, self.WIDTH, self.HEIGHT)
         
-        if not self.is_mask:
-            background_color = np.random.rand(3)
-        else:
-            background_color = np.zeros(3)
+        self.background_color = np.random.randint(0, 256, 3)
             
-        self.ctx.set_source_rgb(*background_color)
+        self.ctx.set_source_rgb(*self.background_color/255)
         self.ctx.fill()
-        return background_color
 
-    def color_shape(self, background_color, line_width, fill_shape):
+    def color_shape(self, line_width, fill_shape):
     
         # choose random shape color
-        if not self.is_mask:
-            spiral_color = np.random.rand(3)
-        else:
-            spiral_color = np.ones(3)
+        self.shape_color = np.random.randint(0, 256, 3)
     
         # prevents spiral and background colors from being too similar
-        while LA.norm(spiral_color - background_color) < 0.2:
-            spiral_color = np.random.rand(3)
+        while LA.norm(self.shape_color - self.background_color) < 40:
+            self.shape_color = np.random.randint(0, 256, 3)
     
-        self.ctx.set_source_rgb(*spiral_color)
+        self.ctx.set_source_rgb(*self.shape_color/255)
     
         if fill_shape:
             self.ctx.fill()
@@ -89,17 +84,21 @@ class Pattern():
         
     def random_transform(self):
         
-        if not self.is_mask:
-            rand_x = np.random.normal(0, 30)
-            rand_y = np.random.normal(0, 30)
-            angle = np.random.uniform(low=0.0, high=360, size=1)
-            theta = angle * np.pi / 180
-                
-            # random shift
-            self.ctx.translate(rand_x, rand_y)
+        rand_x = np.random.normal(0, 30)
+        rand_y = np.random.normal(0, 30)
+        angle = np.random.uniform(low=0.0, high=360, size=1)
+        theta = angle * np.pi / 180
+        x_shear_noise = np.random.normal(0, 0.25)
+        y_shear_noise = np.random.normal(0, 0.25)
+            
+        # random shift
+        self.ctx.translate(rand_x, rand_y)
 
-            # random rotatation
-            self.rotate(theta)
+        # random rotatation
+        self.rotate(theta)
+        
+        # random shear
+        self.shear(x_shear_noise, y_shear_noise)
 
     def create_image(self):
         
@@ -107,15 +106,36 @@ class Pattern():
         self.surface = cairo.ImageSurface(cairo.FORMAT_RGB24, self.WIDTH, self.HEIGHT)
         self.ctx = cairo.Context(self.surface)
         
-        self.background_color = self.color_background()
+        self.color_background()
         
-        # add a random shift and rotation on the original image
-        # self.random_transform()
+        # add a random shift, rotation, and shear
+        self.random_transform()
         
-        # must be implemented by other shape classes
+        # must be implemented by classes that inherit from Pattern
         self.draw_path()
         
-        self.color_shape(self.background_color, self.line_width, self.fill_shape)
+        self.color_shape(self.line_width, self.fill_shape)
         # write image to file
         self.surface.write_to_png(self.filepath)
+        
+        
+    def create_mask(self):
+        
+        if not self.filepath:
+            raise("An image must be create before a mask can be created")
+            
+        # open image and convert to array
+        mask = Image.open(self.filepath)
+        mask = np.array(mask)
+        
+        # convert to boolean array
+        mask = np.all(mask == self.background_color, axis=-1)
+        
+        # flip 0s and 1s and convert to 0-255 range
+        mask = (1-mask) * 255
+        mask = mask.astype(np.uint8)
+        
+        img = Image.fromarray(mask)
+        img.save(self.maskpath)
+            
     
