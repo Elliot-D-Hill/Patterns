@@ -10,6 +10,7 @@ import numpy as np
 import L_System
 
 from Pattern import Pattern
+from collections import deque
 
 class Branch(Pattern):
     
@@ -33,7 +34,7 @@ class Branch(Pattern):
         self.line_width = line_width
         
     # reduces the freqency of line and angle noise
-    # allows for some vairation, but it not too chaotic
+    # allows for some vairation, but isn't too chaotic
     def reduce_noise_freq(self, randomize):
         ln = 0
         an = 0

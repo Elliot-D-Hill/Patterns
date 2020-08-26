@@ -68,8 +68,8 @@ class Parameters():
         degrees=np.arange(20, 50) # degrees turned per L-system instruction
         length=np.arange(10, 25) # distance moved per L-system instruction
         length_noise=np.arange(5, 10) 
-        angle_noise=np.arange(np.pi / 100, np.pi / 10, 0.05)
-        line_width=np.arange(2, 5, 0.1)
+        angle_noise=np.arange(np.pi / 180, np.pi / 20, 0.05)
+        line_width=np.arange(2.5, 5, 0.1)
             
         self.parameters['branch'] = [n_iter, degrees, length, length_noise, angle_noise, line_width]
         

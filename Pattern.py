@@ -119,7 +119,7 @@ class Pattern():
         self.surface.write_to_png(self.filepath)
         
         
-    def create_mask(self):
+    def create_mask(self, pattern_labels):
         
         if not self.filepath:
             raise("An image must be create before a mask can be created")
@@ -129,11 +129,10 @@ class Pattern():
         mask = np.array(mask)
         
         # convert to boolean array
-        mask = np.all(mask == self.background_color, axis=-1)
+        mask = np.all(mask == self.shape_color, axis=-1)
         
-        # flip 0s and 1s and convert to 0-255 range
-        mask = (1-mask) * 255
-        mask = mask.astype(np.uint8)
+        # convert to int
+        mask = mask.astype(np.uint8) * pattern_labels[self.label]
         
         img = Image.fromarray(mask)
         img.save(self.maskpath)
