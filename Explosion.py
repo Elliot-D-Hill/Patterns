@@ -13,6 +13,8 @@ from Pattern import Pattern
 class Explosion(Pattern):
     
     def __init__(self, 
+                 WIDTH, 
+                 HEIGHT,
                  degrees, 
                  n_joints, 
                  length, 
@@ -21,6 +23,8 @@ class Explosion(Pattern):
                  offset_noise,
                  angle_noise, 
                  line_width):
+        
+        super().__init__(WIDTH, HEIGHT)
 
         self.label = 'explosion'
         self.fill_shape = False

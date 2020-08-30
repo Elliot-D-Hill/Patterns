@@ -19,7 +19,17 @@ from collections import deque
 
 class Tile(Pattern):
     
-    def __init__(self, N, scale, noise, x_shift, y_shift, line_width):
+    def __init__(self, 
+                 WIDTH, 
+                 HEIGHT, 
+                 N, 
+                 scale, 
+                 noise, 
+                 x_shift, 
+                 y_shift, 
+                 line_width):
+         
+        super().__init__(WIDTH, HEIGHT)
         
         self.label = 'tile'
         self.fill_shape = False
@@ -47,7 +57,7 @@ class Tile(Pattern):
     # generate uniform n x n grid and add gaussian noise to each grid point
     def make_points(self):
         
-        # add random shift to alternating rows to create more tiling variations
+        # add random shift to alternating rows/columns to create more tiling variations
         def skip_shift(idx, val, shift):
             if idx % 2 == 0:
                 val += shift

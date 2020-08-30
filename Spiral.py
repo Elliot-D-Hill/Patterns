@@ -6,14 +6,26 @@ Created on Wed Aug 19 10:36:57 2020
 @author: Elliot
 """
 
-# spiral classes implemented: Archimedean, and Golden pirals
+# spiral classes implemented: Archimedean and Golden spirals
 
 from Pattern import Pattern
 import numpy as np
 
 class Archimedean(Pattern):
     
-    def __init__(self, N, t, x, y, c, alpha, spiral_width, noise):
+    def __init__(self, 
+                 WIDTH, 
+                 HEIGHT, 
+                 N, 
+                 t, 
+                 x, 
+                 y, 
+                 c, 
+                 alpha, 
+                 spiral_width, 
+                 noise):
+        
+        super().__init__(WIDTH, HEIGHT)
         
         self.label = 'spiral'
         self.line_width = 2
@@ -64,7 +76,18 @@ class Archimedean(Pattern):
         
 class Golden(Pattern):
     
-    def __init__(self, N, b, a, step, noise, num_arms, line_width):
+    def __init__(self, 
+                 WIDTH, 
+                 HEIGHT, 
+                 N, 
+                 b, 
+                 a, 
+                 step, 
+                 noise, 
+                 num_arms, 
+                 line_width):
+        
+        super().__init__(WIDTH, HEIGHT)
         
         self.label = 'spiral'
         self.fill_shape = False

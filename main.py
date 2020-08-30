@@ -24,10 +24,14 @@ PATH_TO_IMAGE_FOLDER = 'data/images'
 PATH_TO_MASKS_FOLDER = 'data/image_masks'
 
 # choose number of images to create
-num_images = 200
+num_images = 4
 
-# may only want to turn this on if you dispaly a small number of images
-display_images = False 
+# set image dimensions
+WIDTH=400
+HEIGHT=400
+
+# may only want to turn this on if you create a small number of images
+display_images = True 
 
 ##################### image generation #####################
 
@@ -68,19 +72,15 @@ for i in range(imgs_per_pattern):
         random_parameters = parameters.choose_random(pattern)
         
         if pattern == 'golden': # golden spiral
-            shape = Spiral.Golden(*random_parameters)
+            shape = Spiral.Golden(WIDTH, HEIGHT, *random_parameters)
         elif pattern == 'archimedean': # archimedean spiral 
-            shape = Spiral.Archimedean(*random_parameters)
+            shape = Spiral.Archimedean(WIDTH, HEIGHT, *random_parameters)
         elif pattern == 'explosion': # explosion
-            shape = Explosion.Explosion(*random_parameters)
+            shape = Explosion.Explosion(WIDTH, HEIGHT, *random_parameters)
         elif pattern == 'tile': # tile 
-            shape = Tile.Tile(*random_parameters)
+            shape = Tile.Tile(WIDTH, HEIGHT, *random_parameters)
         elif pattern == 'branch': # branch
-            shape = Branch.Branch(*random_parameters)
-        
-        # set image dimensions
-        shape.WIDTH=600
-        shape.HEIGHT=600
+            shape = Branch.Branch(WIDTH, HEIGHT, *random_parameters)
     
         shape.filepath = f'{PATH_TO_IMAGE_FOLDER}/{shape.label}{idx}.png'
         shape.maskpath = f'{PATH_TO_MASKS_FOLDER}/{shape.label}_mask{idx}.png'

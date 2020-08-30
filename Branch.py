@@ -10,17 +10,20 @@ import numpy as np
 import L_System
 
 from Pattern import Pattern
-from collections import deque
 
 class Branch(Pattern):
     
-    def __init__(self, 
+    def __init__(self,
+                 WIDTH, 
+                 HEIGHT,
                  n_iter, 
                  degrees, 
                  length, 
                  length_noise, 
                  angle_noise, 
                  line_width):
+        
+        super().__init__(WIDTH, HEIGHT)
         
         self.label = 'branch'
         self.fill_shape = False

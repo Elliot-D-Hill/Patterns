@@ -15,21 +15,21 @@ from PIL import Image
 class Pattern():
     
     __metaclass__ = abc.ABCMeta
+
     
-    WIDTH = 600
-    HEIGHT = 600
-    width_factor = 0.5
-    height_factor = 0.5
-    width = WIDTH * width_factor
-    height = HEIGHT * height_factor
-    
-    def __init__(self):
+    def __init__(self, WIDTH, HEIGHT, width_factor=0.5, height_factor=0.5):
         self.ctx = None
         self.surface = None
         self.background_color = None
         self.shape_color = None
         self.filepath = None
         self.maskpath = None
+        self.WIDTH = WIDTH
+        self.HEIGHT = HEIGHT
+        self.width_factor = width_factor
+        self.height_factor = height_factor
+        self.width = self.WIDTH * width_factor
+        self.height = self.HEIGHT * height_factor
         
     @abc.abstractmethod
     def draw_path(self):

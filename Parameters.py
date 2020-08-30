@@ -25,7 +25,7 @@ class Parameters():
         step = np.arange(0.16, 0.25, 0.01) # length between samples
         noise = np.arange(0, 0.2, 0.05) # noise in xy coordinates
         num_arms = np.arange(1, 11) # number of spiral arms
-        line_width = np.arange(0.5, 8, 0.5) # width of each spiral arm
+        line_width = np.arange(3, 8, 0.1) # width of each spiral arm
             
         self.parameters['golden'] = [N, b, a, step, noise, num_arms, line_width]
             
@@ -36,7 +36,7 @@ class Parameters():
         y = np.arange(3, 10) # scale of y points
         c = np.arange(0, 40) # distance of intial point to spiral center
         alpha = np.arange(1, 4, 0.1) # number of loops (I think...)
-        spiral_width = np.arange(0.15, 0.8, 0.05) # width of spiral arm
+        spiral_width = np.arange(0.5, 1, 0.01) # width of spiral arm
         noise = np.arange(0, 0.25, 0.01) # noise in x and y
         
         self.parameters['archimedean'] = [N, t, x, y, c, alpha, spiral_width, noise]
@@ -49,7 +49,7 @@ class Parameters():
         offset = np.arange(0, 25) # how far away each arm is from the center
         offset_noise = np.arange(0, 5)
         angle_noise = np.arange(0, 10)
-        line_width = np.arange(1, 4, 0.1)
+        line_width = np.arange(2, 4, 0.1)
         
         self.parameters['explosion'] = [degrees, n_joints, length, length_noise, offset, offset_noise, angle_noise, line_width]
     
@@ -59,7 +59,7 @@ class Parameters():
         noise = np.arange(0, 0.08, 0.001) # noise of grid points
         x_shift = np.arange(0, 0.7, 0.01) # shifts alternating rows
         y_shift = np.arange(0, 0.7, 0.01) # shifts alternating columns
-        line_width = np.arange(2, 9, 0.25)
+        line_width = np.arange(2, 8, 0.25)
 
         self.parameters['tile'] = [N, scale, noise, x_shift, y_shift, line_width]
             
